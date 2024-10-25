@@ -22,7 +22,9 @@ const variantDropShadows = {
 
 export default function Button({ className, icon = null, loading = false, disabled = false, variant = "primary", children, ...props }: ButtonProps) {
     return (
-        <button className={
+        <button 
+            {...props}
+            className={
             classNames(
                 "px-[16px] py-[10px] rounded-[8px] font-raleway font-bold",
                 "text-center gap-[10px] transition-all",
@@ -34,7 +36,7 @@ export default function Button({ className, icon = null, loading = false, disabl
             )
         }>
             {icon != null && icon}
-            {children}
+            {loading ? "Loading" : children}
         </button>
     )
 }
