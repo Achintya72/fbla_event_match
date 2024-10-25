@@ -3,19 +3,102 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #282828;
 }
 
 body {
-  color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+.layout {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-left: clamp(20px, 3.5vw, 50px);
+  padding-right: clamp(20px, 3.5vw, 50px);
+}
+
+.nav-top {
+  padding: clamp(20px, 3.5vw, 50px);
+}
+
+h1 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: clamp(48px, 13vw, 65px);
+}
+
+.outline-button {
+  background: linear-gradient(90deg, #FFA800, #6490E7);
+}
+
+@property --a {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 90deg;
+}
+
+.outline-button:hover {
+  animation: gradient-rotate infinite;
+  animation-duration: 5s;
+  background: linear-gradient(calc(var(--a) + 90deg), #FFA800, #6490E7);
+}
+
+@keyframes gradient-rotate {
+  from {
+    --a: 0deg;
+  }
+
+  to {
+    --a: 360deg;
+  }
+}
+
+.yellow-circle {
+  border-radius: 320px;
+  width: 320px;
+  height: 320px;
+  left: -20px;
+  bottom: 20px;
+  background: rgba(255, 168, 0, 0.25);
+  filter: blur(1000px);
+  animation: upAndDown infinite;
+  animation-duration: 20s;
+}
+
+@keyframes upAndDown {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-150%);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+
+@keyframes downAndUp {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(150%);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+.blue-circle {
+  border-radius: 320px;
+  width: 320px;
+  height: 320px;
+  top: 100px;
+  right: -100px;
+  background: rgba(100, 144, 231, 0.5);
+  filter: blur(1000px);
+  animation: downAndUp infinite;
+  animation-duration: 20s;
 }
