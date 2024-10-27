@@ -1,9 +1,15 @@
 "use client";
 
+import { auth } from "@/backend/firebase";
+import StudentContext from "@/backend/studentContext";
+import { Student } from "@/backend/types";
 import Button from "@/components/Button";
+import ErrorChip from "@/components/ErrorChip";
 import Input from "@/components/Input";
 import Navbar from "@/components/Navbar";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 
 interface SignUpForm extends FieldValues {
@@ -18,9 +24,29 @@ export default function CreateAccount() {
         reValidateMode: "onChange"
     });
     const { push } = useRouter();
+    const [error, changeError] = useState<string | null>(null);
+    const { addNewUser } = useContext(StudentContext);
+    const [loading, changeLoading] = useState(false);
 
     const onSubmit = async (values: SignUpForm) => {
-        console.log(values);
+        if (!loading) {
+            changeLoading(true);
+            try {
+                let newUser = await createUserWithEmailAndPassword(auth, values.email, values.password);
+                await addNewUser(newUser.user.uid, {
+                    id: newUser.user.uid,
+                    name: "",
+                    grade: 9,
+                    onboarded: false,
+                    teams: []
+                } as Student, changeError);
+                push("/dashboard");
+            } catch (err) {
+                console.log(err);
+                changeError("Something went wrong. Try again later.");
+            }
+            changeLoading(false);
+        }
     }
 
     return (
@@ -76,12 +102,13 @@ export default function CreateAccount() {
                         placeholder="••••••••••••••••"
                         type="password"
                     />
-                    <Button>Sign Up</Button>
+                    <Button>{loading ? "Loading" : "Sign Up"}</Button>
                     <Button type="button" variant="text" onClick={() => push("/login")}>Use Existing Account</Button>
                 </form>
             </main>
             <div className="!absolute !z-0 yellow-circle overflow-hidden" />
             <div className="!absolute !z-0 blue-circle" />
+            <ErrorChip message={error} changeMessage={changeError} />
         </div>
     )
 }
