@@ -1,8 +1,13 @@
 "use client";
 
+import { auth } from "@/backend/firebase";
 import Button from "@/components/Button";
+import ErrorChip from "@/components/ErrorChip";
 import Input from "@/components/Input";
 import Navbar from "@/components/Navbar";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 
 interface LoginForm extends FieldValues {
@@ -17,9 +22,15 @@ export default function LoginPage() {
             reValidateMode: "onChange"
         }
     );
+    const [error, changeError] = useState<string | null>("Hello!");
+    const { push } = useRouter();
 
-    const onSubmit = (formValues: LoginForm) => {
-
+    const onSubmit = async (formValues: LoginForm) => {
+        try {
+            await signInWithEmailAndPassword(auth, formValues.email, formValues.password);
+        } catch(err) {
+            changeError("Something went wrong. Try again later")
+        }
     }
 
     return (
@@ -46,16 +57,19 @@ export default function LoginPage() {
                         register={register}
                         options={{
                             required: "Field is required",
-                            minLength: { value: 5, message: "Must be atleast 5 characters"}
+                            minLength: { value: 5, message: "Must be atleast 5 characters" }
                         }}
                         error={errors.password}
                         placeholder="••••••••••••••••"
                         type="password"
                     />
                     <Button type="submit">Log In</Button>
-                    <Button type="button" variant="text">Create Account</Button>
+                    <Button type="button" variant="text" onClick={() => push("/createAccount")}>Create Account</Button>
                 </form>
             </main>
+            <div className="!absolute !z-0 yellow-circle overflow-hidden" />
+            <div className="!absolute !z-0 blue-circle" />
+            <ErrorChip message={error} changeMessage={changeError}/>
         </div>
     )
 }
