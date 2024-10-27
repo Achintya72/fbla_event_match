@@ -3,35 +3,32 @@
 import { onAuthStateChanged, User } from "firebase/auth";
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 import { auth } from "./firebase";
+import Loader from "@/components/Loader";
 
 interface LoginContextData {
     authUser: User | null,
-    loggedIn: boolean | null
+    populated: boolean
 }
 
 const LoginContext = createContext<LoginContextData>({
     authUser: null,
-    loggedIn: null
+    populated: false
 });
 
 function LoginContextProvider({ children }: PropsWithChildren){
     const [authUser, changeAuthUser] = useState<User | null>(null);
-    const [loggedIn, changeLoggedIn] = useState<boolean | null>(null);
+    const [populated, changePopulated] = useState<boolean>(false);
 
     useEffect(() => {
         return onAuthStateChanged(auth, (user) => {
             changeAuthUser(user);
-            if(user) {
-                changeLoggedIn(true);
-            } else {
-                changeLoggedIn(false);
-            }
+            changePopulated(true);
         });
     }, [onAuthStateChanged])
 
     const values: LoginContextData = {
         authUser,
-        loggedIn
+        populated
     }
 
     return (
