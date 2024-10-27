@@ -1,10 +1,8 @@
 "use client";
 
-import { auth } from "@/backend/firebase";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Navbar from "@/components/Navbar";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
 
@@ -22,12 +20,7 @@ export default function CreateAccount() {
     const { push } = useRouter();
 
     const onSubmit = async (values: SignUpForm) => {
-        try {
-           // TODO: Add user creation
-
-        } catch(err) {
-
-        }
+        console.log(values);
     }
 
     return (

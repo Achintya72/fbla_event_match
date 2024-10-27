@@ -17,7 +17,8 @@ export default function ErrorChip({ message, changeMessage }: { message: string 
         } else {
             changeShow(false);
         }
-    }, [message]);
+    }, [message, changeMessage
+    ]);
 
     return (
         <>

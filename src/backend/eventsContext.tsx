@@ -40,8 +40,6 @@ const EventsContextProvider = ({ children }: PropsWithChildren) => {
         }
     }, [
         authUser,
-        db,
-        getDocs,
         changeEvents,
         changePopulated
     ]);

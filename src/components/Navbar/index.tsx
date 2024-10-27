@@ -12,7 +12,7 @@ import LoginContext from "@/backend/loginContext";
 export default function Navbar() {
     const [showMenu, toggleMenu] = useState<boolean>(false);
     const router = useRouter();
-    const { loggedIn } = useContext(LoginContext);
+    const { authUser } = useContext(LoginContext);
 
     return (
         <nav className="flex relative z-40 items-center justify-between w-full text-white">
@@ -21,7 +21,7 @@ export default function Navbar() {
                 <h4 className="font-space text-2xl font-bold">FBLA Event Match</h4>
             </div>
             <div className="hidden md:flex absolute left-[50%] translate-x-[-50%] gap-[20px]">
-                {loggedIn && <Link href="/dashboard" className="font-raleway font-medium" >Dashboard</Link>}
+                {authUser != null && <Link href="/dashboard" className="font-raleway font-medium" >Dashboard</Link>}
             </div>
             <Button className="hidden md:block" onClick={() => router.push("/login")}> Log In</Button>
             {
@@ -32,7 +32,7 @@ export default function Navbar() {
     {
         showMenu &&
         <div className="absolute z-50 right-[0px] top-[45px] text-right border border-[rgba(255,255,255,0.3)] flex gap-[20px] bg-background p-[20px] rounded-[8px] flex-col md:hidden">
-            {loggedIn && <Link href="/dashboard" className="font-raleway font-medium" >Dashboard</Link>}
+            {authUser != null && <Link href="/dashboard" className="font-raleway font-medium" >Dashboard</Link>}
             <Button onClick={() => router.push("/login")} >Log In</Button>
         </div>
     }

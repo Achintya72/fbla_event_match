@@ -1,11 +1,10 @@
 "use client";
 
-import { createContext, PropsWithChildren, useContext, useEffect, useLayoutEffect, useState } from "react";
+import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 import { Student, StudentID, Team } from "./types";
 import LoginContext from "./loginContext";
-import { collection, doc, DocumentSnapshot, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "./firebase";
-import Loader from "@/components/Loader";
 
 interface StudentContextData {
     students: Student[],
@@ -30,6 +29,10 @@ function StudentContextProvider({ children }: PropsWithChildren) {
     const [myTeams, changeMyTeams] = useState<Team[]>([]);
     const { authUser } = useContext(LoginContext);
     
+    const getMe = useCallback(() => {
+        return students.find(s => s.id === authUser?.uid);
+    }, [students, authUser]);
+     
     useEffect(() => {
         changePopulated(false);
         const getStudents = async () => {
@@ -47,7 +50,7 @@ function StudentContextProvider({ children }: PropsWithChildren) {
             changeStudents([]);
             changePopulated(true);
         }
-    }, [authUser, getDocs, collection, db, changeStudents, changePopulated]);
+    }, [authUser, changeStudents, changePopulated]);
     
 
     useEffect(() => {
@@ -74,11 +77,8 @@ function StudentContextProvider({ children }: PropsWithChildren) {
             changeMyTeams([]);
             changePopulatedTeams(true);
         }
-    }, [authUser, students, getDoc, doc, db, changeMyTeams, changePopulatedTeams ]);
+    }, [authUser, students, getMe, changeMyTeams, changePopulatedTeams ]);
 
-    const getMe = () => {
-        return students.find(s => s.id === authUser?.uid);
-    }
 
     const values: StudentContextData = {
         students,
