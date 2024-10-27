@@ -29,6 +29,7 @@ export default function LoginPage() {
         try {
             await signInWithEmailAndPassword(auth, formValues.email, formValues.password);
         } catch(err) {
+            console.log(err);
             changeError("Something went wrong. Try again later")
         }
     }

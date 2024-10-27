@@ -1,9 +1,8 @@
 "use client";
 
 import { onAuthStateChanged, User } from "firebase/auth";
-import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import { auth } from "./firebase";
-import Loader from "@/components/Loader";
 
 interface LoginContextData {
     authUser: User | null,
@@ -24,7 +23,7 @@ function LoginContextProvider({ children }: PropsWithChildren){
             changeAuthUser(user);
             changePopulated(true);
         });
-    }, [onAuthStateChanged])
+    }, [])
 
     const values: LoginContextData = {
         authUser,
