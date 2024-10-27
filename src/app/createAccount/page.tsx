@@ -102,7 +102,7 @@ export default function CreateAccount() {
                         placeholder="••••••••••••••••"
                         type="password"
                     />
-                    <Button>{loading ? "Loading" : "Sign Up"}</Button>
+                    <Button loading={loading}>Sign Up</Button>
                     <Button type="button" variant="text" onClick={() => push("/login")}>Use Existing Account</Button>
                 </form>
             </main>

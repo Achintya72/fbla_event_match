@@ -89,7 +89,7 @@ export default function EditStudent() {
                         }}
                         placeholder="9"
                     />
-                    <Button>{loading ? "Loading" : "Save"}</Button>
+                    <Button loading={loading}>Save</Button>
                 </form>
             </main>
             <ErrorChip message={error} changeMessage={changeError} />
