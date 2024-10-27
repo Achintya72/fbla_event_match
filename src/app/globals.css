@@ -56,49 +56,66 @@ h1 {
 }
 
 .yellow-circle {
-  border-radius: 320px;
-  width: 320px;
-  height: 320px;
-  left: -20px;
-  bottom: 20px;
+  border-radius: min(33vw, 300px);
+  width: min(33vw, 300px);
+  height: min(33vw, 300px);
+  bottom: 33vh;
+  left: -10vw;
+  filter: blur(max(33vw, 300px));
   background: rgba(255, 168, 0, 0.25);
-  filter: blur(1000px);
   animation: upAndDown infinite;
   animation-duration: 20s;
 }
 
 @keyframes upAndDown {
   0% {
-    transform: translateY(0px);
+    transform: translate(0px, 0px)
   }
   50% {
-    transform: translateY(-150%);
+    transform: translate(20vw, -30vh);
   }
   100% {
-    transform: translateY(0px);
+    transform: translateY(0px, 0px);
   }
 }
 
 
 @keyframes downAndUp {
   0% {
-    transform: translateY(0px);
+    transform: translate(0px, 0px);
   }
   50% {
-    transform: translateY(150%);
+    transform: translate(-20vw, 30vh);
   }
   100% {
-    transform: translateY(0px);
+    transform: translate(0px, 0px);
   }
 }
 .blue-circle {
-  border-radius: 320px;
-  width: 320px;
-  height: 320px;
-  top: 100px;
-  right: -100px;
+  border-radius: min(33vw, 300px);
+  width: min(33vw, 300px);
+  height: min(33vw, 300px);
+  top: 33vh;
+  right: -10vw;
+  filter: blur(max(33vw, 300px));
   background: rgba(100, 144, 231, 0.5);
-  filter: blur(1000px);
   animation: downAndUp infinite;
   animation-duration: 20s;
+}
+
+.errorChip {
+  animation: floatUp;
+  transform: translateX(-50%);
+  animation-duration: 1s;
+}
+
+@keyframes floatUp {
+  from {
+    transform: translate(-50%, 100px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
 }
