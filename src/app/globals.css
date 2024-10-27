@@ -119,3 +119,37 @@ h1 {
     opacity: 1;
   }
 }
+
+.loader {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  border-radius: 10px;
+}
+
+.loader-1 {
+  transform: translateY(-50px);
+  animation: verticalLoader 1s ease-in-out 0s infinite alternate
+}
+
+.loader-2 {
+  transform: translateX(-50px);
+  animation: horizontalLoader 1s ease-in-out 0.5s infinite alternate;
+}
+
+@keyframes verticalLoader {
+  from {
+    transform: translateY(-50px);
+  }
+  to {
+    transform: translateY(50px);
+  }
+}
+@keyframes horizontalLoader {
+  from {
+    transform: translateX(-50px);
+  }
+  to {
+    transform: translateX(50px);
+  }
+}
