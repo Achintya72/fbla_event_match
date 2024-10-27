@@ -22,12 +22,13 @@ export default function LoginPage() {
             reValidateMode: "onChange"
         }
     );
-    const [error, changeError] = useState<string | null>("Hello!");
+    const [error, changeError] = useState<string | null>(null);
     const { push } = useRouter();
 
     const onSubmit = async (formValues: LoginForm) => {
         try {
             await signInWithEmailAndPassword(auth, formValues.email, formValues.password);
+            push("/dashboard");
         } catch(err) {
             console.log(err);
             changeError("Something went wrong. Try again later")
