@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Space_Grotesk, Raleway } from "next/font/google";
+import { LoginContextProvider } from "@/backend/loginContext";
 
 export const metadata: Metadata = {
   title: "FBLA Event Registration",
@@ -34,7 +35,9 @@ export default function RootLayout({
       <body
         className={`${space.variable} ${raleway.variable} antialiased`}
       >
-        {children}
+        <LoginContextProvider>
+          {children}
+        </LoginContextProvider>
       </body>
     </html>
   );

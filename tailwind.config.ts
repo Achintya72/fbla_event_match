@@ -12,7 +12,8 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         blue: "#6490E7",
-        yellow: "#C59F56"
+        yellow: "#C59F56",
+        secondary: "#FFA800"
       },
       fontFamily: {
         space: "var(--font-space)",
