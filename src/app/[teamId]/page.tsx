@@ -2,6 +2,7 @@
 
 import EventsContext from "@/backend/eventsContext";
 import { db } from "@/backend/firebase";
+import LoginContext from "@/backend/loginContext";
 import StudentContext from "@/backend/studentContext";
 import { CompEvent, Student, Team } from "@/backend/types";
 import Button from "@/components/Button";
@@ -12,11 +13,20 @@ import { eventDensity } from "@/utils/eventDensity";
 import { CaretLeft, Trash } from "@phosphor-icons/react/dist/ssr";
 import { arrayUnion, doc, getDoc, writeBatch } from "firebase/firestore";
 import { useParams, useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useContext, useLayoutEffect, useState } from "react";
 
 export default function EditTeam() {
     const { teamId } = useParams();
     const { myTeams } = useContext(StudentContext);
+    const { push } = useRouter();
+    const { authUser } = useContext(LoginContext);
+
+    useLayoutEffect(() => {
+        if(!authUser) {
+            push("/login");
+        }
+    }, [ authUser, push])
+
 
     const thisTeam = myTeams.find(t => t.id === teamId);
     return (
