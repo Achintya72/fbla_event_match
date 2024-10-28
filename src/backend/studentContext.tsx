@@ -17,6 +17,7 @@ interface StudentContextData {
     addNewTeam: (team: Team) => void,
     rehydrateStudents: (students: Student[]) => void,
     getStudent: (id: string) => Student | undefined,
+    removeMyTeam: (team: Team) => void
 }
 
 const StudentContext = createContext<StudentContextData>({
@@ -26,10 +27,11 @@ const StudentContext = createContext<StudentContextData>({
     getMe: () => undefined,
     populated: false,
     addNewUser: () => { },
-    editStudent: () => {},
-    addNewTeam: () => {},
-    rehydrateStudents: () => {},
-    getStudent: () => undefined
+    editStudent: () => { },
+    addNewTeam: () => { },
+    rehydrateStudents: () => { },
+    getStudent: () => undefined,
+    removeMyTeam: () => { }
 });
 
 function StudentContextProvider({ children }: PropsWithChildren) {
@@ -64,12 +66,12 @@ function StudentContextProvider({ children }: PropsWithChildren) {
         try {
             await setDoc(doc(db, "students", data.id), {
                 ...data
-            }, { merge: true});
+            }, { merge: true });
             changeStudents(prev => {
                 const newPrev = prev.filter(s => s.id !== data.id);
                 return [...newPrev, data];
             })
-        } catch(err) {
+        } catch (err) {
             console.log(err);
             changeError("Something's wrong. Try again later");
         }
@@ -77,18 +79,25 @@ function StudentContextProvider({ children }: PropsWithChildren) {
 
     const addNewTeam = (team: Team) => {
         const me = getMe();
-        if(me != undefined) {
+        if (me != undefined) {
             changeMyTeams(prev => [...prev, team]);
             changeStudents(prev => {
                 const myIndex = prev.findIndex(s => s.id === me.id);
-                if(myIndex) {
-                    prev[myIndex].teams.push({
+                if (myIndex) {
+                    prev[myIndex].teams = [...prev[myIndex].teams.filter(t => t.teamId != team.id), {
                         teamId: team.id,
                         eventId: team.eventId
-                    });
+                    }];
                 }
                 return [...prev];
             });
+        }
+    }
+
+    const removeMyTeam = (team: Team) => {
+        const me = getMe();
+        if (me != undefined) {
+            changeMyTeams(prev => prev.filter(t => t.id !== team.id));
         }
     }
 
@@ -176,6 +185,7 @@ function StudentContextProvider({ children }: PropsWithChildren) {
         rehydrateStudents,
         addNewTeam,
         getStudent,
+        removeMyTeam
     }
 
     return (
