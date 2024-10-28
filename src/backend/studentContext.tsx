@@ -83,7 +83,7 @@ function StudentContextProvider({ children }: PropsWithChildren) {
             changeMyTeams(prev => [...prev, team]);
             changeStudents(prev => {
                 const myIndex = prev.findIndex(s => s.id === me.id);
-                if (myIndex) {
+                if (myIndex != -1) {
                     prev[myIndex].teams = [...prev[myIndex].teams.filter(t => t.teamId != team.id), {
                         teamId: team.id,
                         eventId: team.eventId
