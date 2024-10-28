@@ -17,7 +17,8 @@ interface StudentContextData {
     addNewTeam: (team: Team) => void,
     rehydrateStudents: (students: Student[]) => void,
     getStudent: (id: string) => Student | undefined,
-    removeMyTeam: (team: Team) => void
+    removeMyTeam: (team: Team) => void,
+    changeMyTeams: Dispatch<SetStateAction<Team[]>>
 }
 
 const StudentContext = createContext<StudentContextData>({
@@ -31,7 +32,8 @@ const StudentContext = createContext<StudentContextData>({
     addNewTeam: () => { },
     rehydrateStudents: () => { },
     getStudent: () => undefined,
-    removeMyTeam: () => { }
+    removeMyTeam: () => { },
+    changeMyTeams: () => {}
 });
 
 function StudentContextProvider({ children }: PropsWithChildren) {
@@ -185,7 +187,8 @@ function StudentContextProvider({ children }: PropsWithChildren) {
         rehydrateStudents,
         addNewTeam,
         getStudent,
-        removeMyTeam
+        removeMyTeam,
+        changeMyTeams
     }
 
     return (
