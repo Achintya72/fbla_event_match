@@ -13,7 +13,10 @@ interface StudentContextData {
     populatedTeams: boolean,
     getMe: () => Student | undefined,
     addNewUser: (id: string, data: Student, changeError: Dispatch<SetStateAction<string | null>>) => void
-    editStudent: (data: Student, changeError: Dispatch<SetStateAction<string | null>>) => void
+    editStudent: (data: Student, changeError: Dispatch<SetStateAction<string | null>>) => void,
+    addNewTeam: (team: Team) => void,
+    rehydrateStudents: (students: Student[]) => void,
+    getStudent: (id: string) => Student | undefined,
 }
 
 const StudentContext = createContext<StudentContextData>({
@@ -23,7 +26,10 @@ const StudentContext = createContext<StudentContextData>({
     getMe: () => undefined,
     populated: false,
     addNewUser: () => { },
-    editStudent: () => {}
+    editStudent: () => {},
+    addNewTeam: () => {},
+    rehydrateStudents: () => {},
+    getStudent: () => undefined
 });
 
 function StudentContextProvider({ children }: PropsWithChildren) {
@@ -36,6 +42,10 @@ function StudentContextProvider({ children }: PropsWithChildren) {
     const getMe = useCallback(() => {
         return students.find(s => s.id === authUser?.uid);
     }, [students, authUser]);
+
+    const getStudent = (id: string) => {
+        return students.find(s => s.id === id);
+    }
 
     const addNewUser = async (id: string, data: Student, changeError: Dispatch<SetStateAction<string | null>>) => {
         console.log(id);
@@ -65,6 +75,31 @@ function StudentContextProvider({ children }: PropsWithChildren) {
         }
     }
 
+    const addNewTeam = (team: Team) => {
+        const me = getMe();
+        if(me != undefined) {
+            changeMyTeams(prev => [...prev, team]);
+            changeStudents(prev => {
+                const myIndex = prev.findIndex(s => s.id === me.id);
+                if(myIndex) {
+                    prev[myIndex].teams.push({
+                        teamId: team.id,
+                        eventId: team.eventId
+                    });
+                }
+                return [...prev];
+            });
+        }
+    }
+
+    const rehydrateStudents = (stus: Student[]) => {
+        let newStudents = [...students];
+        stus.forEach(s => {
+            const stuindex = newStudents.findIndex(a => a.id === s.id);
+            newStudents[stuindex] = s;
+        });
+        changeStudents(newStudents);
+    }
     useEffect(() => {
         changePopulated(false);
         const getStudents = async (uid: string) => {
@@ -137,7 +172,10 @@ function StudentContextProvider({ children }: PropsWithChildren) {
         populatedTeams,
         getMe,
         addNewUser,
-        editStudent
+        editStudent,
+        rehydrateStudents,
+        addNewTeam,
+        getStudent,
     }
 
     return (
