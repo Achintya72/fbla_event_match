@@ -1,7 +1,7 @@
 "use client";
 
 import EventsContext from "@/backend/eventsContext";
-import ComboBox, { ComboElement } from "@/components/ComboBox";
+import ComboBox from "@/components/ComboBox";
 import Navbar from "@/components/Navbar";
 import DensityChip from "@/components/DensityChip";
 import { CaretLeft, Trash } from "@phosphor-icons/react/dist/ssr";
@@ -15,7 +15,6 @@ import LoginContext from "@/backend/loginContext";
 import { addDoc, arrayUnion, collection, doc, getDoc, writeBatch } from "firebase/firestore";
 import { db } from "@/backend/firebase";
 
-interface EventOption extends ComboElement { }
 
 export default function CreateTeam() {
     const { events } = useContext(EventsContext);
@@ -33,7 +32,7 @@ export default function CreateTeam() {
         if (!authUser) {
             router.push("/login");
         }
-    }, [authUser]);
+    }, [authUser, router]);
 
     const submit = async () => {
         if(!loading) {
@@ -43,7 +42,7 @@ export default function CreateTeam() {
             if(event == null) {
                 newErrors = ["Must select an event!", ...newErrors]
             }
-            let nullTeammates = teammates.filter(t => t == null).length;
+            const nullTeammates = teammates.filter(t => t == null).length;
             if(nullTeammates > 0) {
                 newErrors = [...newErrors, `You have ${nullTeammates} empty teammates`];
             }
@@ -177,7 +176,7 @@ export default function CreateTeam() {
                                     />
                                     {t?.id !== me?.id &&
                                         <Button className="!bg-red-500" onClick={() => {
-                                            let newTeammates = [...teammates];
+                                            const newTeammates = [...teammates];
                                             newTeammates.splice(i, 1);
                                             changeTeammates(newTeammates);
                                         }} icon={<Trash size={24} />}></Button>
@@ -186,7 +185,7 @@ export default function CreateTeam() {
                             ))}
                             {teammates.length < event?.maxMembers &&
                                 <Button variant="text" onClick={() => {
-                                    let newTeammates = [...teammates, null];
+                                    const newTeammates = [...teammates, null];
                                     changeTeammates(newTeammates);
                                 }}>Add Teammate</Button>
 

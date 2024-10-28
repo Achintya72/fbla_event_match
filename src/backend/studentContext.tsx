@@ -4,7 +4,7 @@ import { createContext, Dispatch, PropsWithChildren, SetStateAction, useCallback
 import { Student, StudentID, Team } from "./types";
 import LoginContext from "./loginContext";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
-import { auth, db } from "./firebase";
+import { db } from "./firebase";
 
 interface StudentContextData {
     students: Student[],
@@ -102,7 +102,7 @@ function StudentContextProvider({ children }: PropsWithChildren) {
     }
 
     const rehydrateStudents = (stus: Student[]) => {
-        let newStudents = [...students];
+        const newStudents = [...students];
         stus.forEach(s => {
             const stuindex = newStudents.findIndex(a => a.id === s.id);
             newStudents[stuindex] = s;

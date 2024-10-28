@@ -23,7 +23,7 @@ export default function EditTeam() {
         <div className="layout flex flex-col relative nav-top text-center overflow-x-hidden  text-white min-h-[100vh]">
             <Navbar />
             <main className="relative z-10 flex-1 w-full text-center flex flex-col items-center justify-center">
-                {thisTeam ? <EditTeamForm team={thisTeam} /> : <h2 className="font-space text-3xl font-bold">This team doesn't exist, or you don't have accesss</h2>}
+                {thisTeam ? <EditTeamForm team={thisTeam} /> : <h2 className="font-space text-3xl font-bold">This team doesn&apos;t exist, or you don&apos;t have accesss</h2>}
             </main>
         </div >
     )
@@ -48,7 +48,7 @@ function EditTeamForm({ team }: { team: Team }) {
             if (event == null) {
                 newErrors = ["Must select an event!", ...newErrors]
             }
-            let nullTeammates = teammates.filter(t => t == null).length;
+            const nullTeammates = teammates.filter(t => t == null).length;
             if (nullTeammates > 0) {
                 newErrors = [...newErrors, `You have ${nullTeammates} empty teammates`];
             }
@@ -175,7 +175,7 @@ function EditTeamForm({ team }: { team: Team }) {
                                 />
                                 {t?.id !== me?.id &&
                                     <Button className="!bg-red-500" onClick={() => {
-                                        let newTeammates = [...teammates];
+                                        const newTeammates = [...teammates];
                                         newTeammates.splice(i, 1);
                                         changeTeammates(newTeammates);
                                     }} icon={<Trash size={24} />}></Button>
@@ -184,7 +184,7 @@ function EditTeamForm({ team }: { team: Team }) {
                         ))}
                         {teammates.length < event?.maxMembers &&
                             <Button variant="text" onClick={() => {
-                                let newTeammates = [...teammates, null];
+                                const newTeammates = [...teammates, null];
                                 changeTeammates(newTeammates);
                             }}>Add Teammate</Button>
 

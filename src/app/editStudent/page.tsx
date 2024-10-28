@@ -37,7 +37,7 @@ export default function EditStudent() {
         if (authUser == null) {
             router.push("/login");
         }
-    }, [authUser]);
+    }, [authUser, router]);
 
     const onSubmit = async (values: OnboardingValues) => {
         if (!loading) {

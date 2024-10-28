@@ -1,6 +1,7 @@
 "use client";
 
 import { auth } from "@/backend/firebase";
+import LoginContext from "@/backend/loginContext";
 import StudentContext from "@/backend/studentContext";
 import { Student } from "@/backend/types";
 import Button from "@/components/Button";
@@ -9,7 +10,7 @@ import Input from "@/components/Input";
 import Navbar from "@/components/Navbar";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useContext, useLayoutEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 
 interface SignUpForm extends FieldValues {
@@ -23,16 +24,23 @@ export default function CreateAccount() {
         mode: "all",
         reValidateMode: "onChange"
     });
+    const { authUser } = useContext(LoginContext);
     const { push } = useRouter();
     const [error, changeError] = useState<string | null>(null);
     const { addNewUser } = useContext(StudentContext);
     const [loading, changeLoading] = useState(false);
 
+    useLayoutEffect(() => {
+        if(!authUser) {
+            push("/login");
+        }
+    }, [authUser, push]);
+
     const onSubmit = async (values: SignUpForm) => {
         if (!loading) {
             changeLoading(true);
             try {
-                let newUser = await createUserWithEmailAndPassword(auth, values.email, values.password);
+                const newUser = await createUserWithEmailAndPassword(auth, values.email, values.password);
                 await addNewUser(newUser.user.uid, {
                     id: newUser.user.uid,
                     name: "",

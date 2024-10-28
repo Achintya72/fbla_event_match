@@ -1,5 +1,4 @@
 "use client";
-import EventsContext from "@/backend/eventsContext"
 import LoginContext from "@/backend/loginContext";
 import StudentContext from "@/backend/studentContext";
 import Navbar from "@/components/Navbar";
@@ -23,7 +22,7 @@ export default function Dashboard() {
         if (authUser == null) {
             push("/login");
         }
-    }, [authUser]);
+    }, [authUser, push]);
 
 
     const deleteTeam = async (team: Team) => {
@@ -62,7 +61,7 @@ export default function Dashboard() {
             <div className="nav-top flex flex-col gap-[50px]">
                 <Navbar />
                 <main className="relative  z-10 w-full overflow-x-hidden overflow-y-visible flex flex-col items-center justify-center">
-                    {student == undefined ? <p className="font-raleway">Account doesn't exist</p> :
+                    {student == undefined ? <p className="font-raleway">Account doesn&apos;t exist</p> :
                         <div className="flex flex-col w-full">
                             <div className="flex justify-between items-center">
                                 <h4 className="text-2xl font-light font-raleway">Good Evening,</h4>
