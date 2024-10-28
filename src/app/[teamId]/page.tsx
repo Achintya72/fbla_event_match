@@ -109,6 +109,9 @@ function EditTeamForm({ team }: { team: Team }) {
                             }, { merge: true }
                         )
                     })
+                    batch.set(doc(db, "teams", team.id), {
+                        students: teammates.filter(s => s != undefined).map(s => s.id)
+                    }, {merge: true})
                     await batch.commit();
                     // local rehydration
                     const removingFromInitial = initialStudents.filter(s => s != undefined).map(s => ({ ...s, teams: s.teams.filter(t => t.teamId !== team.id )}));
