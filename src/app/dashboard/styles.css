@@ -1,0 +1,24 @@
+.stationaryBlue {
+    min-width: min(50vw, 500px);
+    min-height: min(55vw, 500px);
+    border-radius: 100%;
+    filter: blur(min(100vw,1000px));
+    position: absolute;
+    z-index: 0;
+    opacity: 0.3;
+    top: max(-15vw, -150px);
+    right: max(-10vw, -100px);
+    background: theme("colors.blue");
+}
+
+.stationaryYellow {
+    min-width: min(33vw, 300px);
+    min-height: min(33vw, 300px);
+    border-radius: 100%;
+    filter: blur(min(66vw,600px));
+    position: absolute;
+    z-index: 0;
+    opacity: 0.5;
+    left: max(-10vw, -100px);
+    background: theme("colors.yellow");
+}

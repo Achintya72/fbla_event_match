@@ -32,6 +32,15 @@ h1 {
 .outline-button {
   background: linear-gradient(90deg, #FFA800, #6490E7);
 }
+.team {
+  transition: all;
+  transition-duration: 300ms;
+}
+
+.team:hover {
+  background: linear-gradient(90deg, #FFA800, #6490E7);
+
+}
 
 @property --a {
   syntax: '<angle>';
@@ -71,9 +80,11 @@ h1 {
   0% {
     transform: translate(0px, 0px)
   }
+
   50% {
     transform: translate(20vw, -30vh);
   }
+
   100% {
     transform: translateY(0px, 0px);
   }
@@ -84,13 +95,16 @@ h1 {
   0% {
     transform: translate(0px, 0px);
   }
+
   50% {
     transform: translate(-20vw, 30vh);
   }
+
   100% {
     transform: translate(0px, 0px);
   }
 }
+
 .blue-circle {
   border-radius: min(33vw, 300px);
   width: min(33vw, 300px);
@@ -114,6 +128,7 @@ h1 {
     transform: translate(-50%, 100px);
     opacity: 0;
   }
+
   to {
     transform: translate(-50%, 0);
     opacity: 1;
@@ -141,14 +156,17 @@ h1 {
   from {
     transform: translateY(-50px);
   }
+
   to {
     transform: translateY(50px);
   }
 }
+
 @keyframes horizontalLoader {
   from {
     transform: translateX(-50px);
   }
+
   to {
     transform: translateX(50px);
   }

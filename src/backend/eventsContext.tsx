@@ -27,7 +27,7 @@ const EventsContextProvider = ({ children }: PropsWithChildren) => {
             const response = await getDocs(collection(db, "events"));
             const newEvents = response.docs.map(doc => {
                 return { ...doc.data(), id: doc.id as EventID } as CompEvent
-            });
+            }).sort((a, b) => a.name.localeCompare(b.name));
             changeEvents(newEvents);
             changePopulated(true);
         }

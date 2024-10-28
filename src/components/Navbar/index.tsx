@@ -8,6 +8,8 @@ import { List } from "@phosphor-icons/react";
 import { X } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import LoginContext from "@/backend/loginContext";
+import { signOut } from "firebase/auth";
+import { auth } from "@/backend/firebase";
 
 export default function Navbar() {
     const [showMenu, toggleMenu] = useState<boolean>(false);
@@ -23,7 +25,10 @@ export default function Navbar() {
             <div className="hidden md:flex absolute left-[50%] translate-x-[-50%] gap-[20px]">
                 {authUser != null && <Link href="/dashboard" className="font-raleway font-medium" >Dashboard</Link>}
             </div>
-            <Button className="hidden md:block" onClick={() => router.push("/login")}> Log In</Button>
+            {authUser == null ? <Button className="hidden md:block" onClick={() => router.push("/login")}> Log In</Button>
+            : 
+                <Button className="hidden md:block" onClick={() => signOut(auth)}>Log Out</Button>
+            }
             {
         !showMenu ?
         <List size={24} onClick={() => toggleMenu(true)} className="flex md:hidden" /> :

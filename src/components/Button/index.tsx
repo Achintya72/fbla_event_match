@@ -26,15 +26,16 @@ export default function Button({ className, onClick, icon = null, loading = fals
     return (
         <button 
             {...props}
-            onClick={onClick}
+            onClick={!disabled ? (onClick ? onClick: () => {}): undefined}
             className={
             classNames(
-                "px-[16px] py-[10px] rounded-[8px] font-raleway font-bold",
+                "px-[16px] py-[10px] rounded-[8px] text-center font-raleway font-bold",
                 "text-center gap-[10px] transition-all",
-                disabled ? "text-gray-600" : "text-white",
+                "flex items-center justify-center gap-[10px]",
                 variantColors[variant],
                 icon == null ? "min-w-[100px]" : "",
                 variantDropShadows[variant],
+                disabled ? "!bg-[#504F4F] !text-[#9B9B9B] cursor-not-allowed" : "",
                 className ? className : ""
             )
         }>
