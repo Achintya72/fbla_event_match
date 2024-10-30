@@ -8,6 +8,7 @@ interface Student {
     grade: 9 | 10 | 11 | 12,
     onboarded: boolean,
     teams: StudentTeamAddress[],
+    admin?: boolean,
 }
 
 interface StudentTeamAddress {

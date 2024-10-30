@@ -10,11 +10,15 @@ import { useRouter } from "next/navigation";
 import LoginContext from "@/backend/loginContext";
 import { signOut } from "firebase/auth";
 import { auth } from "@/backend/firebase";
+import StudentContext from "@/backend/studentContext";
 
 export default function Navbar() {
     const [showMenu, toggleMenu] = useState<boolean>(false);
     const router = useRouter();
     const { authUser } = useContext(LoginContext);
+    const { getMe } = useContext(StudentContext);
+
+    const isAdmin = getMe()?.admin ?? false;
 
     return (
         <nav className="flex relative z-40 items-center justify-between w-full text-white">
@@ -24,6 +28,7 @@ export default function Navbar() {
             </div>
             <div className="hidden md:flex absolute left-[50%] translate-x-[-50%] gap-[20px]">
                 {authUser != null && <Link href="/dashboard" className="font-raleway font-medium" >Dashboard</Link>}
+                {isAdmin &&  <Link href="/admin" className="font-raleway font-medium" >Admin</Link>}
             </div>
             {authUser == null ? <Button className="hidden md:block" onClick={() => router.push("/login")}> Log In</Button>
             : 
@@ -38,6 +43,7 @@ export default function Navbar() {
         showMenu &&
         <div className="absolute z-50 right-[0px] top-[45px] text-right border border-[rgba(255,255,255,0.3)] flex gap-[20px] bg-background p-[20px] rounded-[8px] flex-col md:hidden">
             {authUser != null && <Link href="/dashboard" className="font-raleway font-medium" >Dashboard</Link>}
+            {isAdmin &&  <Link href="/admin" className="font-raleway font-medium" >Admin</Link>}
             <Button onClick={() => router.push("/login")} >Log In</Button>
         </div>
     }

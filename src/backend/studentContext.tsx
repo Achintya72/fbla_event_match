@@ -132,7 +132,7 @@ function StudentContextProvider({ children }: PropsWithChildren) {
                     grade: 9,
                     onboarded: false,
                     teams: []
-                }]);
+                } as Student]);
             } else {
                 changeStudents(newStudents);
 
