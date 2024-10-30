@@ -94,7 +94,7 @@ function EditTeamForm({ team }: { team: Team }) {
             if (event?.intro && (seniorCount > 0 || juniorCount > 0)) {
                 newErrors = [...newErrors, "Intro events are only for underclassmen!"];
             }
-            if (event != null && event.level == "state-only" && Math.floor(teammates.length / 2) <= seniorCount) {
+            if (event != null && event.level == "state-only" && seniorCount > teammates.length / 2) {
                 newErrors = [...newErrors, "For state-only events, seniors have to make up less than 50% of the team"]
             };
             changeErrors(newErrors);
