@@ -1,6 +1,7 @@
 "use client";
 
 import classNames from "@/utils/classnames";
+import { X } from "@phosphor-icons/react/dist/ssr";
 import { KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
 
 export type ComboElement = {
@@ -86,6 +87,13 @@ export default function ComboBox<T extends ComboElement>(
         }
     }
 
+    const clear = () => {
+        onChange(null);
+        changeInputText("");
+        toggleOptions(false);
+        changeHighlighted(-1);
+    }
+
     useEffect(() => {
         if (highlighted != -1) {
             optionsRef.current?.scrollTo({
@@ -127,6 +135,9 @@ export default function ComboBox<T extends ComboElement>(
                 <div className="absolute left-[15px] bottom-[15px]">
                     {value != null ? renderChip(value.id) : <div className="bg-[rgba(255,255,255,0.1)] w-[24px] h-[24px] rounded-[4px]" />}
                 </div>
+            }
+            {value != null && !disabled &&
+                <X size={24} className="absolute right-[15px] bottom-[15px]" onClick={clear} />
             }
             {showOptions &&
                 <div ref={optionsRef} className={classNames(
