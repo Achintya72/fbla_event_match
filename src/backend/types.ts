@@ -34,6 +34,7 @@ interface Team {
     captain: StudentID,
     eventId: EventID,
     eventName: string,
+    status?: "selected" | "rejected"
 } 
 
 export type {
