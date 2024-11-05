@@ -43,7 +43,7 @@ export default function Admin() {
 
         getTeams();
     }, []);
-
+  
     const publish = async () => {
         changePublishing(true);
         const batch = writeBatch(db);
@@ -56,7 +56,6 @@ export default function Admin() {
         await batch.commit();
         changePublishing(false);
     }
-
 
     return (
         <div className="layout flex flex-col relative nav-top overflow-x-hidden  text-white min-h-[100vh]">
@@ -87,6 +86,7 @@ export default function Admin() {
                         />
                         : <StudentView teams={allTeams} changeTeams={changeTeams} />
                     }
+               
                 </main>
             }
         </div>
