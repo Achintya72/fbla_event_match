@@ -3,27 +3,29 @@
 import EventsContext from "@/backend/eventsContext";
 import { db } from "@/backend/firebase";
 import StudentContext from "@/backend/studentContext";
-import { CompEvent, Student, Team } from "@/backend/types";
+import { CompEvent, Team } from "@/backend/types";
 import Button from "@/components/Button";
-import ComboBox from "@/components/ComboBox";
-import DensityChip from "@/components/DensityChip";
 import Loader from "@/components/Loader";
 import Navbar from "@/components/Navbar";
-import classNames from "@/utils/classnames";
-import { eventDensity } from "@/utils/eventDensity";
-import { CaretDown } from "@phosphor-icons/react/dist/ssr";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, writeBatch } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import EventView from "./eventView";
+import StudentView from "./studentView";
 
 export default function Admin() {
-    const [event, changeEvent] = useState<CompEvent | null>(null);
     const { getMe } = useContext(StudentContext);
-    const [allTeams, changeTeams] = useState<Team[]>([]);
     const [loading, changeLoading] = useState(true);
+
+    const [event, changeEvent] = useState<CompEvent | null>(null);
+    const [allTeams, changeTeams] = useState<Team[]>([]);
+    const [publishing, changePublishing] = useState(false);
     const { events } = useContext(EventsContext);
+
     const { push } = useRouter();
-    const [hideEmpty, changeHideEmpty] = useState(true);
+    const [view, changeView] = useState<"student" | "event">(
+        "event"
+    );
 
     useLayoutEffect(() => {
         if (!(getMe()?.admin ?? false)) {
@@ -41,73 +43,52 @@ export default function Admin() {
 
         getTeams();
     }, []);
-
-    const searchedEvents = event == null ? events : events.filter((e) => e.id === event.id);
-    const eventsToRender = searchedEvents.filter(e => !hideEmpty || e.teams.length > 0);
+  
+    const publish = async () => {
+        changePublishing(true);
+        const batch = writeBatch(db);
+        allTeams.forEach(t => {
+            const teamRef = doc(db, "teams", t.id);
+            batch.set(teamRef, {
+                status: (t.status ?? "rejected")
+            }, { merge: true});
+        });
+        await batch.commit();
+        changePublishing(false);
+    }
 
     return (
         <div className="layout flex flex-col relative nav-top overflow-x-hidden  text-white min-h-[100vh]">
             <Navbar />
             {loading ? <Loader /> :
-                <main className="relative z-10 flex-1 gap-[20px] w-full flex flex-col ">
+                <main className="relative z-10 flex-1 gap-[20px] w-full flex flex-col">
                     <h1 className="font-space font-bold">Admin</h1>
-                    <div className="relative flex items-end gap-[20px]">
-                        <ComboBox<CompEvent>
-                            value={event}
-                            onChange={changeEvent}
-                            options={events}
-                            label="Select Event"
-                            renderChip={(id: string) => {
-                                const e = events.find(ev => ev.id === id);
-                                if (e) {
-                                    return <DensityChip density={eventDensity(e)} />
-                                }
-                                return <DensityChip density="low" />
-                            }}
-                        />
-                        <Button onClick={() => changeHideEmpty(prev => !prev)}>{hideEmpty ? "Show All" : "Hide Empty"}</Button>
+                    <div className="flex items-center justify-between">
+                        <div className="relative self-start flex p-[5px] rounded-[10px] bg-[rgba(255,255,255,0.1)]">
+                            <div
+                                className="w-[125px] transition-all duration-300 z-0 absolute top-[5px] bottom-[5px] bg-blue rounded-[5px]"
+                                style={{
+                                    transform: view === "event" ? "" : "translateX(100%)"
+                                }}
+                            />
+                            <p className="cursor-pointer relative z-10 font-raleway w-[125px] text-center py-[10px]" onClick={() => changeView("event")}>Event View</p>
+                            <p className="cursor-pointer relative z-10 font-raleway w-[125px] text-center py-[10px]" onClick={() => changeView("student")}>Student View</p>
+                        </div>
+                        <Button variant="secondary" loading={publishing} onClick={publish}>Publish</Button>
                     </div>
-                    {eventsToRender.map(e => {
-                        return (
-                            <EventDetails event={e} key={e.id} teams={allTeams} />
-                        )
-                    })}
+                    {view === "event" ?
+                        <EventView
+                            event={event}
+                            changeEvent={changeEvent}
+                            events={events}
+                            allTeams={allTeams}
+                            changeTeams={changeTeams}
+                        />
+                        : <StudentView teams={allTeams} changeTeams={changeTeams} />
+                    }
+               
                 </main>
             }
-        </div>
-    )
-}
-
-
-const EventDetails = ({ event, teams }: { event: CompEvent, teams: Team[] }) => {
-    const [showTeams, changeShowTeams] = useState(false);
-    const { students } = useContext(StudentContext);
-
-    const eventTeams = teams.filter((t) => t.eventId === event.id);
-
-    return (
-        <div className="flex flex-col gap-[10px]">
-            <div className="flex gap-[10px] items-center cursor-pointer" onClick={() => changeShowTeams(prev => !prev)}>
-                <DensityChip density={eventDensity(event)} />
-                <h2 className="font-space flex-1 text-2xl font-semibold">{event.name} ({event.teams.length})</h2>
-                <CaretDown size={24} className={classNames("transition-all", showTeams ? "rotate-180" : "")} />
-            </div>
-            {showTeams &&
-                <div className="flex gap-[20px] flex-wrap">
-                    {eventTeams.map(t => <TeamDetails key={t.id} team={t} students={students}/>)}
-                </div>
-            }
-        </div>
-    )
-}
-
-
-const TeamDetails = ({ team, students }: { team: Team, students: Student[] }) => {
-    
-    const teamStudents: Student[] = students.filter((s) => team.students.includes(s.id));
-    return (
-        <div className="p-[20px] min-w-[200px] max-w-[350px] flex-1 border border-solid border-gray-600">
-            {teamStudents.map(stu => <p className="font-raleway" key={stu.id}>{stu.name} ({stu.grade})</p>)}
         </div>
     )
 }
