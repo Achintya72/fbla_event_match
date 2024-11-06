@@ -1,6 +1,7 @@
 "use client";
 
 import LoginContext from "@/backend/loginContext";
+import { rules } from "@/backend/rules";
 import StudentContext from "@/backend/studentContext";
 import { Student } from "@/backend/types";
 import Button from "@/components/Button";
@@ -38,6 +39,12 @@ export default function EditStudent() {
             router.push("/login");
         }
     }, [authUser, router]);
+
+    useLayoutEffect(() => {
+        if(!rules.allowOnboarding) {
+            router.push("/dashboard");
+        }
+    }, [router]);
 
     const onSubmit = async (values: OnboardingValues) => {
         if (!loading) {

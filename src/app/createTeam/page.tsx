@@ -14,6 +14,7 @@ import StudentContext from "@/backend/studentContext";
 import LoginContext from "@/backend/loginContext";
 import { addDoc, arrayUnion, collection, doc, getDoc, writeBatch } from "firebase/firestore";
 import { db } from "@/backend/firebase";
+import { rules } from "@/backend/rules";
 
 
 export default function CreateTeam() {
@@ -33,6 +34,12 @@ export default function CreateTeam() {
             router.push("/login");
         }
     }, [authUser, router]);
+
+    useLayoutEffect(() => {
+        if(!rules.allowCreate) {
+            router.push("/dasbhoard");
+        }
+    }, [router])
 
     const submit = async () => {
         if(!loading) {

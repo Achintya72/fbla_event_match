@@ -3,6 +3,7 @@
 import EventsContext from "@/backend/eventsContext";
 import { db } from "@/backend/firebase";
 import LoginContext from "@/backend/loginContext";
+import { rules } from "@/backend/rules";
 import StudentContext from "@/backend/studentContext";
 import { CompEvent, Student, Team } from "@/backend/types";
 import Button from "@/components/Button";
@@ -25,8 +26,13 @@ export default function EditTeam() {
         if(!authUser) {
             push("/login");
         }
-    }, [ authUser, push])
+    }, [authUser, push])
 
+    useLayoutEffect(() => {
+        if(!rules.allowEdit) {
+            push("/dashboard");
+        }
+    }, [push])
 
     const thisTeam = myTeams.find(t => t.id === teamId);
     return (

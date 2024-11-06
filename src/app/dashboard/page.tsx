@@ -14,6 +14,7 @@ import { db } from "@/backend/firebase";
 import DensityChip from "@/components/DensityChip";
 import { eventDensity } from "@/utils/eventDensity";
 import EventsContext from "@/backend/eventsContext";
+import { rules } from "@/backend/rules";
 
 export default function Dashboard() {
     const { authUser } = useContext(LoginContext);
@@ -62,19 +63,19 @@ export default function Dashboard() {
     }
 
     const increasePriority = async (index: number) => {
-        if(index == 0) return;
-        if(loading) return;
-        if(student == null) return;
+        if (index == 0) return;
+        if (loading) return;
+        if (student == null) return;
         changeLoading(true);
         const team = myTeams[index];
         const newOrder = myTeams;
         newOrder[index] = newOrder[index - 1];
         newOrder[index - 1] = team;
-        const newMe = {...student, teams: newOrder.map(t => ({ teamId: t.id, eventId: t.eventId }))} as Student;
+        const newMe = { ...student, teams: newOrder.map(t => ({ teamId: t.id, eventId: t.eventId })) } as Student;
         const batch = writeBatch(db)
         batch.set(doc(db, "students", student.id), {
             teams: []
-        }, {merge: true});
+        }, { merge: true });
         batch.set(doc(db, "students", student.id), {
             teams: newOrder.map(t => ({ teamId: t.id, eventId: t.eventId }))
         }, { merge: true });
@@ -85,19 +86,19 @@ export default function Dashboard() {
     }
 
     const decreasePriority = async (index: number) => {
-        if(index == myTeams.length - 1) return;
-        if(loading) return;
-        if(student == null) return;
+        if (index == myTeams.length - 1) return;
+        if (loading) return;
+        if (student == null) return;
         changeLoading(true);
         const team = myTeams[index];
         const newOrder = myTeams;
         newOrder[index] = newOrder[index + 1];
         newOrder[index + 1] = team;
-        const newMe = {...student, teams: newOrder.map(t => ({ teamId: t.id, eventId: t.eventId }))} as Student;
+        const newMe = { ...student, teams: newOrder.map(t => ({ teamId: t.id, eventId: t.eventId })) } as Student;
         const batch = writeBatch(db)
         batch.set(doc(db, "students", student.id), {
             teams: []
-        }, {merge: true});
+        }, { merge: true });
         batch.set(doc(db, "students", student.id), {
             teams: newOrder.map(t => ({ teamId: t.id, eventId: t.eventId }))
         }, { merge: true });
@@ -106,6 +107,8 @@ export default function Dashboard() {
         changeMyTeams(newOrder);
         changeLoading(false);
     }
+
+    console.log(rules);
 
     return (
         <div className="flex flex-col relative overflow-x-hidden  text-white min-h-[100vh]">
@@ -116,18 +119,22 @@ export default function Dashboard() {
                         <div className="flex flex-col w-full">
                             <div className="flex justify-between items-center">
                                 <h4 className="text-2xl font-light font-raleway">Good Evening,</h4>
-                                <PencilLine size={24} onClick={() => push("/editStudent")} />
+                                {rules.allowOnboarding &&
+                                    <PencilLine size={24} onClick={() => push("/editStudent")} />
+                                }
                             </div>
                             <h1 className="font-space font-bold">{student.name.length == 0 ? "No Name" : student.name}</h1>
                             <strong className="font-space">Grade {student.grade}</strong>
                             <div className="w-full flex items-center justify-between">
                                 <h6 className="font-bold mt-[24px] font-space text-2xl">Your Teams</h6>
-                                <Button
-                                    variant="secondary"
-                                    disabled={!student.onboarded && student.teams.length < 6}
-                                    icon={<Plus size={20} />}
-                                    onClick={() => push("/createTeam")}
-                                >Create Team</Button>
+                                {rules.allowCreate &&
+                                    <Button
+                                        variant="secondary"
+                                        disabled={!student.onboarded && student.teams.length < 6}
+                                        icon={<Plus size={20} />}
+                                        onClick={() => push("/createTeam")}
+                                    >Create Team</Button>
+                                }
                             </div>
                             <div className="w-full">
                                 {!student.onboarded && <p className="font-raleway">Please add your name and grade first</p>}
@@ -149,22 +156,28 @@ export default function Dashboard() {
                                                         /> : <DensityChip density="low" />}
                                                         {t.captain === student.id ?
                                                             <>
-                                                                <UsersFour size={24} className="cursor-pointer" onClick={() => push(`/${t.id}`)} />
-                                                                <Trash size={24} onClick={() => deleteTeam(t)} />
+                                                                {rules.allowEdit && <UsersFour size={24} className="cursor-pointer" onClick={() => push(`/${t.id}`)} />}
+                                                                {rules.allowDelete && <Trash size={24} onClick={() => deleteTeam(t)} />}
                                                             </>
                                                             :
-                                                            <SignOut size={24} onClick={() => leaveTeam(t)} />
+                                                            <>
+                                                                {rules.allowLeave &&
+                                                                    <SignOut size={24} onClick={() => leaveTeam(t)} />
+                                                                }
+                                                            </>
 
                                                         }
                                                     </div>
                                                     {t.students.map(sId => (
                                                         <p className="font-raleway font-light" key={sId}>{getStudent(sId)?.name} {t.captain === sId && "(Captain)"} </p>
                                                     ))}
-                                                    <div className="flex flex-col md:flex-row gap-[10px]">
-                                                        <Button loading={loading} disabled={index == 0} onClick={() => increasePriority(index)}>Increase Priority</Button>
-                                                        <Button loading={loading} disabled={index == myTeams.length - 1} onClick={() => decreasePriority(index)} variant="secondary">Decrease Priority</Button>
+                                                    {rules.allowPrioritization &&
+                                                        <div className="flex flex-col md:flex-row gap-[10px]">
+                                                            <Button loading={loading} disabled={index == 0} onClick={() => increasePriority(index)}>Increase Priority</Button>
+                                                            <Button loading={loading} disabled={index == myTeams.length - 1} onClick={() => decreasePriority(index)} variant="secondary">Decrease Priority</Button>
 
-                                                    </div>
+                                                        </div>
+                                                    }
                                                 </div>
                                             </div>
                                         )
