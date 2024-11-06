@@ -1,4 +1,5 @@
 "use client";
+import { db } from "@/backend/firebase";
 import StudentContext from "@/backend/studentContext";
 import { CompEvent, Student, Team } from "@/backend/types";
 import Button from "@/components/Button";
@@ -7,7 +8,8 @@ import DensityChip from "@/components/DensityChip";
 import classNames from "@/utils/classnames";
 import { eventDensity } from "@/utils/eventDensity";
 import { CaretDown } from "@phosphor-icons/react";
-import { Check, X } from "@phosphor-icons/react/dist/ssr";
+import { Check, Trash, X } from "@phosphor-icons/react/dist/ssr";
+import { deleteDoc, doc } from "firebase/firestore";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 
 function EventView({
@@ -78,11 +80,18 @@ const EventDetails = ({ event, teams, changeTeams }: { event: CompEvent, teams: 
 }
 
 
-const TeamDetails = ({ team, students, teams, changeTeams, showName = false }: { changeTeams: Dispatch<SetStateAction<Team[]>>, teams: Team[], team: Team, students: Student[], showName?: boolean }) => {
+const TeamDetails = ({ team, students, exists = true, teams, changeTeams, showName = false }: { exists?: boolean, changeTeams: Dispatch<SetStateAction<Team[]>>, teams: Team[], team: Team, students: Student[], showName?: boolean }) => {
     
     const teamStudents: Student[] = students.filter((s) => team.students.includes(s.id));
+
+
+    const deleteTeam = async () => {
+        const teamRef = doc(db, "teams", team.id);
+        await deleteDoc(teamRef);
+    }
+
     return (
-        <div className="p-[20px] min-w-[200px] max-w-[350px] flex-1 border border-solid border-gray-600">
+        <div className={classNames("p-[20px] min-w-[200px] max-w-[350px] flex-1 border border-solid", exists ? "border-gray-600" : "border-red-500")}>
             <div className="relative inline-flex p-[5px] rounded-[10px] gap-[10px] bg-[rgba(255,255,255,0.1)] ">
                 <div 
                     className={classNames(team?.status === "selected" ? "bg-green-500" : "bg-red-500", "absolute w-[30px] h-[30px] top-[2px] left-[2px] transition-all z-0 rounded-[8px]")}
@@ -90,6 +99,7 @@ const TeamDetails = ({ team, students, teams, changeTeams, showName = false }: {
                         transform: (team.status ?? "rejected") === "rejected" ? " translateX(calc(4px + 100%))" : ""
                     }}
                 />
+                
                 <Check 
                     size={24} 
                     className="relative z-10 cursor-pointer"
@@ -119,9 +129,19 @@ const TeamDetails = ({ team, students, teams, changeTeams, showName = false }: {
                     }} 
                 />
             </div>
+            {!exists && 
+                <>
+                    <small className="font-raleway block">Team: {team.id}</small>
+                    <small className="font-raleway block">Event: {team.eventId}</small>
+                </>
+            }
             {showName && <h3 className="mt-[6px] font-space font-semibold text-xl">{team.eventName}</h3>}
             <small className="font-raleway block font-light">Members: {teamStudents.length}</small>
             {teamStudents.map(stu => <StudentDetails allTeams={teams} key={stu.id} student={stu}/>)}
+            <div className="flex gap-[10px] self-end">
+            {!exists && <Trash size={24} onClick={deleteTeam}/> }
+
+            </div>
         </div>
     )
 }

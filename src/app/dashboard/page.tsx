@@ -24,10 +24,10 @@ export default function Dashboard() {
     const [loading, changeLoading] = useState(false);
 
     useLayoutEffect(() => {
-        if (authUser == null) {
+        if (authUser == null || getMe() == undefined) {
             push("/login");
         }
-    }, [authUser, push]);
+    }, [authUser, push, getMe]);
 
 
     const deleteTeam = async (team: Team) => {

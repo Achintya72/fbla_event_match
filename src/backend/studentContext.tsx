@@ -33,7 +33,7 @@ const StudentContext = createContext<StudentContextData>({
     rehydrateStudents: () => { },
     getStudent: () => undefined,
     removeMyTeam: () => { },
-    changeMyTeams: () => {}
+    changeMyTeams: () => { }
 });
 
 function StudentContextProvider({ children }: PropsWithChildren) {
@@ -113,35 +113,17 @@ function StudentContextProvider({ children }: PropsWithChildren) {
     }
     useEffect(() => {
         changePopulated(false);
-        const getStudents = async (uid: string) => {
+        const getStudents = async () => {
             const response = await getDocs(collection(db, "students"));
             const newStudents = response.docs.map(doc => {
                 return { ...doc.data(), id: doc.id as StudentID } as Student
             });
-            if (newStudents.find(s => s.id === uid) == undefined) {
-                await setDoc(doc(db, "students", uid), {
-                    id: uid,
-                    name: "",
-                    grade: 9,
-                    onboarded: false,
-                    teams: []
-                });
-                changeStudents([...newStudents, {
-                    id: uid,
-                    name: "",
-                    grade: 9,
-                    onboarded: false,
-                    teams: []
-                } as Student]);
-            } else {
-                changeStudents(newStudents);
-
-            }
+            changeStudents(newStudents);
             changePopulated(true);
         }
 
         if (authUser) {
-            getStudents(authUser.uid);
+            getStudents();
         } else {
             changeStudents([]);
             changePopulated(true);
